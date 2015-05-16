@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>ACE in Action</title>
+<style type="text/css" media="screen">
+    /* #editor {  */
+    /*     position: absolute; */
+    /*     /\* top: 0; *\/ */
+    /*     /\* right: 0; *\/ */
+    /*     /\* bottom: 0; *\/ */
+    /*     /\* left: 0; *\/ */
+    /* } */
+  .ace_editor{
+      width: 600px;
+      /* height: /\* 300px *\/ 100%;  */
+  }
+  body{
+      height: 100%;
+  }
+  html{
+      height: 100%;
+      margin:0;
+  }
+  div{ height: 100%}
+</style>
+<script>
+  window.onhashchange = function() { window.location.reload() }
+  var hash = window.location.hash.replace(/^#/,"");
+      var fields = hash.split(/&/);
+      var prefix = "";
+      var version = "";
+      for(var f in fields){
+        var data = fields[f].split(/=/);
+        if(data[0] == "version"){
+          version = data[1].replace(/%20|%2B/g,"+");
+          break;
+        }
+      }
+    function load_script(url){
+        var fileref=document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src", prefix+(version==""?"":(version+"/"))+url);
+        document.getElementsByTagName("head")[0].appendChild(fileref);
+      }
+      load_script("stdlib.cmis.js");
+      load_script("js_of_ocaml.cmis.js");
+      load_script("js_of_ocaml.toplevel.cmis.js");
+      load_script("js_of_ocaml.deriving.cmis.js");
+      load_script("js_of_ocaml.tyxml.cmis.js");
+      load_script("js_of_ocaml.graphics.cmis.js");
+      load_script("lwt.cmis.js");
+      load_script("react.cmis.js");
+      load_script("reactiveData.cmis.js");
+      load_script("fan.common.cmis.js");
+      load_script("fan.toplib.cmis.js");
+      load_script("toplevel.js");
+    </script>
+
+</head>
+<body>
+
+<div id="editor" style="width: 50%; float:left">
+let rec fib (n:int) =
+  match n with 
+  | 0 | 1 -> 1
+  | _ -> fib (n - 1) + fib (n - 2)
+
+let f _loc (x : Astf.exp) (y : Astf.exp) = %exp{ $x + $y}
+</div>
+
+
+<div id="right" style="width: 50%; float:right">
+  <button id="eval" style="width: 100%" > EVAL </button>
+  <br/>
+  <div id="output">
+
+  </div>
+</div>
+<script src="./ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript">
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/chrome");
+    editor.getSession().setMode("ace/mode/ocaml");
+    editor.resize();
+
+    var output = ace.edit("output");
+    output.setTheme("ace/theme/chrome");
+    output.getSession().setMode("ace/mode/ocaml");
+    output.resize();
+
+    evalButton = document.getElementById('eval');
+    evalButton.addEventListener("click",function(){
+    output.setValue(ocaml.eval(editor.getValue()))
+}
+    
+)
+</script>
+</body>
+</html>
